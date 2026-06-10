@@ -1274,7 +1274,7 @@ export const apiClient = {
           const storedTeams = JSON.parse(localStorage.getItem("hra_teams") || "[]");
           const operationsDept = filteredDepts.find(d => d.name === "Operations");
           const fallbackDeptId = operationsDept ? (operationsDept.id || operationsDept._id) : "Operations";
-          
+
           storedTeams.forEach((t, i) => {
             const tDeptId = t.departmentId?.id || t.departmentId?._id || t.departmentId;
             if (tDeptId === id) {
@@ -1315,7 +1315,7 @@ export const apiClient = {
       const storedTeams = JSON.parse(localStorage.getItem("hra_teams") || "[]");
       const operationsDept = filteredDepts.find(d => d.name === "Operations");
       const fallbackDeptId = operationsDept ? (operationsDept.id || operationsDept._id) : "Operations";
-      
+
       storedTeams.forEach((t, i) => {
         const tDeptId = t.departmentId?.id || t.departmentId?._id || t.departmentId;
         if (tDeptId === id) {
@@ -1372,7 +1372,7 @@ export const apiClient = {
       });
       if (response.ok) {
         const newTeam = await response.json();
-        
+
         if (typeof window !== "undefined") {
           const stored = JSON.parse(localStorage.getItem("hra_teams") || "[]");
           stored.push(newTeam);
@@ -1608,7 +1608,7 @@ export const apiClient = {
       } else if (role === "Employee" || role === "Intern") {
         // Resolve manager ID / team details in local storage
         const teams = JSON.parse(localStorage.getItem("hra_teams") || "[]");
-        const userTeams = teams.filter(t => 
+        const userTeams = teams.filter(t =>
           t.members?.some(m => {
             const mId = m.id || m._id || m;
             const uId = currentUser?.id || currentUser?._id;
@@ -1786,13 +1786,13 @@ export const apiClient = {
       if (role === "Manager") {
         return allProjects.filter(p => p.assignedByEmail?.toLowerCase().trim() === normalizedEmail);
       } else if (role === "Employee" || role === "Intern") {
-        return allProjects.filter(p => 
+        return allProjects.filter(p =>
           p.assignedMembers?.some(m => m.email?.toLowerCase().trim() === normalizedEmail)
         );
       } else if (role === "Admin" || role === "HR") {
         return allProjects;
       }
-      return allProjects.filter(p => 
+      return allProjects.filter(p =>
         p.assignedMembers?.some(m => m.email?.toLowerCase().trim() === normalizedEmail)
       );
     }
@@ -2129,7 +2129,7 @@ export const apiClient = {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("hra_trainings");
       if (stored) return JSON.parse(stored);
-      
+
       const defaults = [
         { id: "t-1", _id: "t-1", name: "Company Orientation", description: "Standard welcome pack and policies handbook.", category: "Onboarding", duration: "1 hour", status: "Active", materials: [{ name: "Intern Handbook.pdf", type: "PDF", url: "#" }] },
         { id: "t-2", _id: "t-2", name: "Internship Guidelines", description: "Rules, milestones, and grading structure.", category: "Onboarding", duration: "1.5 hours", status: "Active", materials: [{ name: "Guidelines.pdf", type: "PDF", url: "#" }] },
@@ -2426,7 +2426,7 @@ export const apiClient = {
         };
         stored[idx] = updatedUser;
         localStorage.setItem("hra_users", JSON.stringify(stored));
-        
+
         const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
         if (currentUser && (currentUser._id === userId || currentUser.id === userId)) {
           localStorage.setItem("currentUser", JSON.stringify(updatedUser));
@@ -2475,7 +2475,7 @@ export const apiClient = {
         };
         stored[idx] = updatedUser;
         localStorage.setItem("hra_users", JSON.stringify(stored));
-        
+
         const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
         if (currentUser && (currentUser._id === userId || currentUser.id === userId)) {
           localStorage.setItem("currentUser", JSON.stringify(updatedUser));

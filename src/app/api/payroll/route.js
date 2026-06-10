@@ -36,7 +36,7 @@ export async function POST(request) {
     await dbConnect();
 
     const body = await request.json();
-    const { userEmail, userName, period, basic, hra, allowances, deductions, net } = body;
+    const { userEmail, userName, period, basic, hra, allowances, deductions, net, pf, tds, professionalTax } = body;
 
     if (!userEmail || !period || basic === undefined || hra === undefined || net === undefined) {
       return NextResponse.json({ message: 'Missing required payroll fields (userEmail, period, basic, hra, net)' }, { status: 400 });
@@ -50,6 +50,9 @@ export async function POST(request) {
       hra: Number(hra),
       allowances: Number(allowances) || 0,
       deductions: Number(deductions) || 0,
+      pf: pf !== undefined ? Number(pf) : 0,
+      tds: tds !== undefined ? Number(tds) : 0,
+      professionalTax: professionalTax !== undefined ? Number(professionalTax) : 0,
       net: Number(net),
       date: new Date().toISOString().split('T')[0],
     });

@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useEffect, Fragment } from "react";
-import { 
-  Users, 
-  Search, 
-  GraduationCap, 
-  Award, 
-  Phone, 
-  Calendar, 
-  MapPin, 
-  ShieldCheck, 
-  ChevronDown, 
-  ChevronUp, 
-  XCircle, 
+import {
+  Users,
+  Search,
+  GraduationCap,
+  Award,
+  Phone,
+  Calendar,
+  MapPin,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
+  XCircle,
   Info,
   Building
 } from "lucide-react";
@@ -146,7 +146,7 @@ export default function HREmployeesDirectory() {
         {/* Table Filters */}
         <div className="border-b border-slate-100 px-6 py-4 bg-slate-50/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h3 className="font-bold text-slate-900 text-sm">HRA Groups Personnel</h3>
-          
+
           <div className="flex flex-wrap items-center gap-3">
             {/* Search */}
             <div className="relative w-52 sm:w-60">
@@ -204,9 +204,9 @@ export default function HREmployeesDirectory() {
                           <div className="flex items-center gap-3">
                             {user.userPhoto ? (
                               <div className="relative w-8 h-8 rounded-full overflow-hidden border border-slate-200 shrink-0 shadow-inner bg-slate-100">
-                                <img 
-                                  src={user.userPhoto} 
-                                  alt={user.name} 
+                                <img
+                                  src={user.userPhoto}
+                                  alt={user.name}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
@@ -215,7 +215,7 @@ export default function HREmployeesDirectory() {
                                 {user.initials}
                               </div>
                             )}
-                             <div className="flex flex-col">
+                            <div className="flex flex-col">
                               <div className="flex items-center gap-1.5">
                                 <span className="font-bold text-slate-900 text-xs">{user.name}</span>
                                 {user.employeeId && (
@@ -251,11 +251,10 @@ export default function HREmployeesDirectory() {
                         </td>
 
                         <td className="px-6 py-4">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold border ${
-                            user.status === "Active"
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold border ${user.status === "Active"
                               ? "bg-emerald-50 text-emerald-800 border-emerald-100"
                               : "bg-rose-50 text-rose-800 border-rose-100"
-                          }`}>
+                            }`}>
                             {user.status}
                           </span>
                         </td>
@@ -288,7 +287,7 @@ export default function HREmployeesDirectory() {
                               </div>
                             ) : (
                               <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-inner flex flex-col md:flex-row gap-6 items-start text-left max-w-4xl">
-                                
+
                                 {/* Photo Attachments Column */}
                                 {user.verificationStatus !== "Unsubmitted" && (
                                   <div className="flex flex-row md:flex-col gap-4 shrink-0 mx-auto md:mx-0">
@@ -301,9 +300,9 @@ export default function HREmployeesDirectory() {
                                         {user.userPhoto && (
                                           <div className="flex flex-col items-center gap-1.5">
                                             <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 hover:shadow-md hover:scale-102 transition-all cursor-zoom-in">
-                                              <img 
-                                                src={user.userPhoto} 
-                                                alt="Headshot" 
+                                              <img
+                                                src={user.userPhoto}
+                                                alt="Headshot"
                                                 className="w-full h-full object-cover"
                                                 onClick={() => setSelectedPhoto(user.userPhoto)}
                                               />
@@ -315,9 +314,9 @@ export default function HREmployeesDirectory() {
                                         {user.aadhaarPhoto && (
                                           <div className="flex flex-col items-center gap-1.5">
                                             <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 hover:shadow-md hover:scale-102 transition-all cursor-zoom-in">
-                                              <img 
-                                                src={user.aadhaarPhoto} 
-                                                alt="Aadhaar" 
+                                              <img
+                                                src={user.aadhaarPhoto}
+                                                alt="Aadhaar"
                                                 className="w-full h-full object-cover"
                                                 onClick={() => setSelectedPhoto(user.aadhaarPhoto)}
                                               />
@@ -419,18 +418,18 @@ export default function HREmployeesDirectory() {
 
       {/* Lightbox / Zoom Modal */}
       {selectedPhoto && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in"
           onClick={() => setSelectedPhoto(null)}
         >
           <div className="relative max-w-lg max-h-[80vh] rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-slate-900 flex items-center justify-center animate-modal">
-            <img 
-              src={selectedPhoto} 
-              alt="Enlarged Headshot" 
+            <img
+              src={selectedPhoto}
+              alt="Enlarged Headshot"
               className="w-full h-full object-contain"
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="absolute top-4 right-4 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors cursor-pointer"
               onClick={() => setSelectedPhoto(null)}
             >
