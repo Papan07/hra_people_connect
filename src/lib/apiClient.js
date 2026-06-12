@@ -2485,6 +2485,194 @@ export const apiClient = {
       return { success: false, message: "User not found in localStorage" };
     }
     return { success: false, message: "Window environment not available" };
+  },
+
+  // Get all offers
+  getOffers: async () => {
+    try {
+      const response = await fetch("/api/offers");
+      if (response.ok) {
+        const offers = await response.json();
+        if (typeof window !== "undefined") {
+          localStorage.setItem("hra_offers", JSON.stringify(offers));
+        }
+        return offers;
+      }
+    } catch (err) {
+      console.warn("MongoDB API unreachable. Getting offers list from LocalStorage...", err);
+    }
+
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("hra_offers") || "[]");
+    }
+    return [];
+  },
+
+  // Create new offer
+  createOffer: async (offerData) => {
+    try {
+      const response = await fetch("/api/offers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(offerData)
+      });
+      if (response.ok) {
+        const newOffer = await response.json();
+        if (typeof window !== "undefined") {
+          const stored = JSON.parse(localStorage.getItem("hra_offers") || "[]");
+          stored.unshift(newOffer);
+          localStorage.setItem("hra_offers", JSON.stringify(stored));
+        }
+        return { success: true, offer: newOffer };
+      } else {
+        const err = await response.json();
+        return { success: false, message: err.message || "Failed to create offer" };
+      }
+    } catch (err) {
+      console.warn("MongoDB API unreachable. Saving offer locally...", err);
+    }
+
+    if (typeof window !== "undefined") {
+      const stored = JSON.parse(localStorage.getItem("hra_offers") || "[]");
+      const year = new Date().getFullYear();
+      const count = stored.length;
+      const offerNumber = `HRA/OFFER/${year}/${(count + 1).toString().padStart(4, '0')}`;
+      
+      const baseSalary = Number(offerData.baseSalary) || 0;
+      const hra = Number(offerData.hra) || 0;
+      const specialAllowance = Number(offerData.specialAllowance) || 0;
+      const conveyanceAllowance = Number(offerData.conveyanceAllowance) || 0;
+      const medicalAllowance = Number(offerData.medicalAllowance) || 0;
+      const otherAllowances = Number(offerData.otherAllowances) || 0;
+      const variablePay = Number(offerData.variablePay) || 0;
+      const bonus = Number(offerData.bonus) || 0;
+      const pfContribution = Number(offerData.pfContribution) || 0;
+      const esiContribution = Number(offerData.esiContribution) || 0;
+      const gratuity = Number(offerData.gratuity) || 0;
+
+      const fixedComp = baseSalary + hra + specialAllowance + conveyanceAllowance + medicalAllowance + otherAllowances + pfContribution + esiContribution + gratuity;
+      const totalCTC = (fixedComp * 12) + (variablePay * 12) + bonus;
+
+      const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+      const createdBy = currentUser?.name || offerData.createdBy || "HR Administrator";
+
+      const newOffer = {
+        _id: `local-offer-${Date.now()}`,
+        id: `local-offer-${Date.now()}`,
+        ...offerData,
+        offerNumber,
+        fixedComp,
+        totalCTC,
+        createdBy,
+        status: offerData.status || 'Draft',
+        history: [
+          {
+            status: offerData.status || 'Draft',
+            updatedBy: createdBy,
+            comments: 'Offer draft initiated offline.',
+            updatedAt: new Date().toISOString()
+          }
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      stored.unshift(newOffer);
+      localStorage.setItem("hra_offers", JSON.stringify(stored));
+      return { success: true, offer: newOffer, offline: true };
+    }
+    return { success: false, message: "Window environment not available" };
+  },
+
+  // Update offer
+  updateOffer: async (id, updateData) => {
+    try {
+      const response = await fetch("/api/offers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...updateData })
+      });
+      if (response.ok) {
+        const updated = await response.json();
+        if (typeof window !== "undefined") {
+          const stored = JSON.parse(localStorage.getItem("hra_offers") || "[]");
+          const idx = stored.findIndex(o => o.id === id || o._id === id);
+          if (idx !== -1) {
+            stored[idx] = updated;
+            localStorage.setItem("hra_offers", JSON.stringify(stored));
+          }
+        }
+        return { success: true, offer: updated };
+      } else {
+        const err = await response.json();
+        return { success: false, message: err.message || "Failed to update offer" };
+      }
+    } catch (err) {
+      console.warn("MongoDB API unreachable. Updating offer locally...", err);
+    }
+
+    if (typeof window !== "undefined") {
+      const stored = JSON.parse(localStorage.getItem("hra_offers") || "[]");
+      const idx = stored.findIndex(o => o.id === id || o._id === id);
+      if (idx !== -1) {
+        const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+        const modifier = currentUser?.name || updateData.updatedBy || "HR/Admin Operator";
+        
+        const historyEntry = {
+          status: updateData.status || stored[idx].status,
+          updatedBy: modifier,
+          comments: updateData.comments || `Offer status transitioned to ${updateData.status}`,
+          updatedAt: new Date().toISOString()
+        };
+
+        const updatedOffer = {
+          ...stored[idx],
+          ...updateData,
+          updatedAt: new Date().toISOString(),
+          history: [...(stored[idx].history || []), historyEntry]
+        };
+
+        if (updateData.status === 'Approved') {
+          updatedOffer.approvedBy = modifier;
+        }
+
+        stored[idx] = updatedOffer;
+        localStorage.setItem("hra_offers", JSON.stringify(stored));
+        return { success: true, offer: updatedOffer, offline: true };
+      }
+      return { success: false, message: "Offer not found locally" };
+    }
+    return { success: false, message: "Window environment not available" };
+  },
+
+  // Delete offer
+  deleteOffer: async (id) => {
+    try {
+      const response = await fetch(`/api/offers?id=${id}`, {
+        method: "DELETE"
+      });
+      if (response.ok) {
+        if (typeof window !== "undefined") {
+          const stored = JSON.parse(localStorage.getItem("hra_offers") || "[]");
+          const filtered = stored.filter(o => o.id !== id && o._id !== id);
+          localStorage.setItem("hra_offers", JSON.stringify(filtered));
+        }
+        return { success: true };
+      } else {
+        const err = await response.json();
+        return { success: false, message: err.message || "Failed to delete offer" };
+      }
+    } catch (err) {
+      console.warn("MongoDB API unreachable. Deleting offer locally...", err);
+    }
+
+    if (typeof window !== "undefined") {
+      const stored = JSON.parse(localStorage.getItem("hra_offers") || "[]");
+      const filtered = stored.filter(o => o.id !== id && o._id !== id);
+      localStorage.setItem("hra_offers", JSON.stringify(filtered));
+      return { success: true, offline: true };
+    }
+    return { success: false, message: "Window environment not available" };
   }
 };
 
