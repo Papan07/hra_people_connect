@@ -1657,19 +1657,6 @@ Alignment with company culture and values`
                 <h3 className="font-bold text-slate-900 text-sm">Candidate & Offer Specifications</h3>
                 <p className="text-[11px] text-slate-400">Complete information brackets to dynamically compile contract templates.</p>
               </div>
-              <select
-                name="templateName"
-                value={formData.templateName}
-                onChange={handleChange}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 font-bold"
-              >
-                <option value="Internship Offer Letter">Internship Template</option>
-                <option value="Employee Offer Letter">Standard Employee Template</option>
-                <option value="Sales Executive Offer Letter">Sales Executive Template</option>
-                <option value="Operations Executive Offer Letter">Operations Executive Template</option>
-                <option value="Work From Home Offer Letter">WFH Employee Template</option>
-                <option value="Contract Employee Offer Letter">Contract Employee Template</option>
-              </select>
             </div>
 
             {/* Candidate Info Section */}
