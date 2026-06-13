@@ -385,7 +385,7 @@ export default function EmployeePayroll() {
             <tr>
               <td>Special Allowance</td>
               <td>₹${formatNum(special)}</td>
-              <td>Professional Tax</td>
+              <td>Admin tax</td>
               <td>₹${formatNum(professionalTax)}</td>
             </tr>
             <tr>
@@ -576,7 +576,7 @@ export default function EmployeePayroll() {
           </div>
           <div className="mt-8">
             <span className="text-2xl font-bold text-slate-950">{deductionsStr}</span>
-            <span className="block text-[10px] text-slate-400 font-semibold mt-1">{pfStr} PF + {tdsStr} TDS + {ptStr} Professional Tax</span>
+            <span className="block text-[10px] text-slate-400 font-semibold mt-1">{pfStr} PF + {tdsStr} TDS + {ptStr} Admin tax</span>
           </div>
         </div>
 
