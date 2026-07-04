@@ -70,7 +70,9 @@ export default function UserManagementConsole() {
     loadData();
   }, [actionParam]);
 
-  // Filter logic based on the sidebar option selected (All, HR, Managers)
+  const onlineCount = usersList.filter(user => user.session === "Online").length;
+
+  // Filter logic based on the sidebar option selected (All, HR, Managers, Active Sessions)
   const filteredUsers = usersList.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,6 +83,8 @@ export default function UserManagementConsole() {
       matchesFilter = user.role === "HR";
     } else if (filterParam === "manager") {
       matchesFilter = user.role === "Manager";
+    } else if (filterParam === "active") {
+      matchesFilter = user.session === "Online";
     }
 
     return matchesSearch && matchesFilter;
@@ -208,14 +212,16 @@ export default function UserManagementConsole() {
               ? "HR Accounts Console"
               : filterParam === "manager"
                 ? "Manager Accounts Console"
-                : "User Management Portal"}
+                : filterParam === "active"
+                  ? "Active Sessions Console"
+                  : "User Management Portal"}
           </h1>
           <p className="text-xs text-slate-500">Configure administrative access credentials, group roles, and secure system session scopes.</p>
         </div>
 
         <button
           onClick={() => router.push("/admin/users?action=create")}
-          className="px-4.5 py-2.5 rounded-xl text-xs font-bold text-white bg-slate-950 hover:bg-slate-800 transition-all shadow-md shadow-slate-950/10 flex items-center gap-2 cursor-pointer w-fit"
+          className="px-4.5 py-2.5 rounded-xl text-xs font-bold text-white bg-slate-955 hover:bg-slate-800 transition-all shadow-md shadow-slate-950/10 flex items-center gap-2 cursor-pointer w-fit"
         >
           <UserPlus className="w-4 h-4" />
           <span>Add System User</span>
@@ -226,7 +232,12 @@ export default function UserManagementConsole() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* Card 1: Total Admins */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-300">
+        <div 
+          onClick={() => router.push("/admin/users?filter=all")}
+          className={`bg-white border rounded-2xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-300 cursor-pointer ${
+            filterParam === "all" || (filterParam !== "hr" && filterParam !== "manager" && filterParam !== "active") ? "border-slate-900 ring-1 ring-slate-900" : "border-slate-200/80"
+          }`}
+        >
           <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800 shrink-0">
             <Users className="w-5 h-5" />
           </div>
@@ -237,13 +248,18 @@ export default function UserManagementConsole() {
         </div>
 
         {/* Card 2: Security Clearance */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-300">
+        <div 
+          onClick={() => router.push("/admin/users?filter=active")}
+          className={`bg-white border rounded-2xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-300 cursor-pointer ${
+            filterParam === "active" ? "border-indigo-600 ring-1 ring-indigo-600" : "border-slate-200/80"
+          }`}
+        >
           <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 shrink-0">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="flex flex-col text-left">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Sessions</span>
-            <span className="text-2xl font-extrabold tracking-tight text-indigo-950">2 Online</span>
+            <span className="text-2xl font-extrabold tracking-tight text-indigo-950">{onlineCount} Online</span>
           </div>
         </div>
 
@@ -268,7 +284,7 @@ export default function UserManagementConsole() {
           <div className="flex items-center gap-2">
             <h3 className="font-bold text-slate-900 text-sm">Authorized Personnel Directory</h3>
             <span className="text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
-              {filteredUsers.length} Active Accounts
+              {filteredUsers.length} {filterParam === "active" ? "Online" : filterParam === "hr" ? "HR" : filterParam === "manager" ? "Manager" : "Active"} Accounts
             </span>
           </div>
 
