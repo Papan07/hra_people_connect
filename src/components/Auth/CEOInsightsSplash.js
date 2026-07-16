@@ -1,107 +1,80 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 export default function CEOInsightsSplash({ onComplete }) {
-  const slides = [
-    { image: "/image5.png" },
-    { image: "/image2.png" },
-    { image: "/image3.png" },
-  ];
-
-  const [current, setCurrent] = useState(0);
-  const intervalRef = useRef(null);
-
-  /* Auto Slider - 4 Seconds */
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 4000); // changed from 3000 to 4000
-
-    return () => clearInterval(intervalRef.current);
-  }, [slides.length]);
-
-  /* Auto Complete */
+  /* Auto Complete/Redirect after 3 seconds */
   useEffect(() => {
     const timer = setTimeout(() => {
       if (onComplete) onComplete();
-    }, 12000); // adjusted for 4 sec per slide
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black">
-      {/* Background Slider */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, scale: 1.08 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: 1.5,
-            ease: "easeInOut",
-          }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={slides[current].image}
-            alt="Dashboard Loading"
-            fill
-            priority
-            quality={100}
-            className="object-cover"
+    <div className="relative w-full h-screen overflow-hidden bg-slate-50 text-slate-900 flex flex-col items-center justify-center transition-colors duration-300">
+      {/* Ambient glow backgrounds */}
+      <div className="absolute top-1/4 left-1/4 w-[35rem] h-[35rem] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse duration-[6000ms]" />
+      <div className="absolute bottom-1/4 right-1/4 w-[35rem] h-[35rem] bg-violet-600/10 rounded-full blur-[120px] animate-pulse duration-[8000ms]" />
+
+      {/* Minimalist Grid Pattern for professional enterprise feel */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+
+      {/* Core Loading Content */}
+      <div className="relative z-10 flex flex-col items-center gap-8 px-6 text-center">
+        {/* Animated Spinner with outer glowing track */}
+        <div className="relative flex items-center justify-center">
+          {/* Outer glowing pulsing ring */}
+          <motion.div
+            animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
+            transition={{
+              repeat: Infinity,
+              duration: 3,
+              ease: "easeInOut",
+            }}
+            className="absolute w-24 h-24 rounded-full border border-indigo-500/30 blur-[4px]"
           />
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/35 z-10" />
-
-      {/* Loading Content */}
-      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
-        
-        {/* Loading Spinner */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{
-            repeat: Infinity,
-            duration: 1,
-            ease: "linear",
-          }}
-          className="w-14 h-14 border-4 border-white/20 border-t-white rounded-full"
-        />
-
-        {/* Small Text */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            repeat: Infinity,
-            repeatType: "reverse",
-            duration: 1.2,
-          }}
-          className="mt-5 text-white/80 text-sm tracking-[4px] uppercase"
-        >
-          Loading Dashboard
-        </motion.p>
-      </div>
-
-      {/* Bottom Slider Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
-        {slides.map((_, index) => (
-          <div
-            key={index}
-            className={`h-2 rounded-full transition-all duration-500 ${
-              current === index
-                ? "w-10 bg-white"
-                : "w-2 bg-white/40"
-            }`}
+          {/* Elegant rotating spinner */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{
+              repeat: Infinity,
+              duration: 1.5,
+              ease: "linear",
+            }}
+            className="w-16 h-16 border-4 border-indigo-500/10 border-t-indigo-600 rounded-full shadow-[0_0_15px_rgba(129,140,248,0.2)]"
           />
-        ))}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {/* Welcome Text */}
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              ease: "easeOut",
+            }}
+            className="text-2xl md:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700"
+          >
+            Welcome to HRA People Connect
+          </motion.h1>
+
+          {/* Subtitle/Status indicator */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              delay: 0.4,
+              duration: 0.8,
+            }}
+            className="text-xs text-slate-500 uppercase tracking-[6px] font-bold font-mono"
+          >
+            Initializing Secure Session
+          </motion.p>
+        </div>
       </div>
     </div>
   );
